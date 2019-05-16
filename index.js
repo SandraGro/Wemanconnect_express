@@ -1,7 +1,14 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const port = 3000;
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+let usuarios = [];
+
 app.listen(port, () => console.log('server running'))
 
 app.all('/hello', (request, response) => {
@@ -39,6 +46,32 @@ app.get('/sandra', (request, response) => {
     response.send("Sandra Alejandra Guerrero Flores");
 });
 
-app.get('/usuario', (request, response) => {
+app.get('/user', (request, response) => {
     response.send("Usuario: Sandra Alejandra Guerrero Flores");
 });
+
+app.get('/body', (request, response) => {
+    console.log(request.body);
+    response.send(request.body);
+});
+
+app.get('/cookie', (request, response) => {
+    console.log(request.cookie);
+    response.send(request.cookie);
+});
+
+app.get('/usuarios', (request, response) => {
+    console.log(request.cookies);
+    response.status(200).send(usuarios);
+});
+
+app.post('/usuarios', (request, response) => {
+    console.log(request.body);
+    if (request.body.username && request.body.correo) {
+        usuarios.push(request.body);
+        response.status(201).send("Ya se agregó");
+    } else {
+        response.status(400).send({ error: "No se agregó" });
+    }
+});
+
