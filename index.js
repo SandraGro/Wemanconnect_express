@@ -4,8 +4,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const port = 3000;
+const jwt = require('jsonwebtoken')
 app.use(bodyParser.json());
 app.use(cookieParser());
+const privateKey = 'llave';
 
 let usuarios = [];
 
@@ -75,3 +77,32 @@ app.post('/usuarios', (request, response) => {
     }
 });
 
+//
+app.post('/auth/singin', (request, response) => {
+    if (!(request.body.user && request.body.pass)) {
+        response.status(400).send('Necesitas introducir usuario y contraseña');
+    }
+    jwt.sign({ user: request.body.user, theme: 'black' }, privateKey, function (err, token) {
+        if (err) {
+            response.send(500).end();
+        } else {
+            response.status(200).send({ token: token })
+        }
+    });
+});
+
+app.use((request, response, next) => {
+    jwt.verify(request.headers.authorization, privateKey, function (err, decoded) {
+        if (err) {
+            response.status(500).end('error aqui');
+        } else {
+            console.log(decoded);
+            // checar ese usuario en la base datos a ver si existe
+            next();
+        }
+    });
+});
+
+app.get('/ultimo', (request, response) => {
+    response.send("Último endpoint");
+});
