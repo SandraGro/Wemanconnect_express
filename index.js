@@ -13,3 +13,15 @@ app.all('/bye', (request, response) => {
 });
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+app.get('/saludo', (request,response) =>{
+    response.status(200).send("Hola, Sandra!");
+});
+
+app.post('/despedida', (request,response) =>{
+    response.status(201).send("Adiós, Sandra!");
+});
+
+app.delete('/borrar', (request,response) =>{
+    response.status(401).send("Se borró");
+});
